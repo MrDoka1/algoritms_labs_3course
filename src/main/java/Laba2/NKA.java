@@ -1,19 +1,24 @@
 package Laba2;
 
+import lombok.Getter;
+
 import java.util.*;
 
+@Getter
 public class NKA {
     private final Map<String, Map<String, List<String>>> transitions;
     private final List<String> trueStates;
+    private final String startState;
 
-    public NKA(Map<String, Map<String, List<String>>> transitions, List<String> trueStates) {
+    public NKA(Map<String, Map<String, List<String>>> transitions, List<String> trueStates, String startState) {
         this.transitions = transitions;
         this.trueStates = trueStates;
+        this.startState = startState;
     }
 
     public boolean solve(String input) {
         Queue<List<String>> queue = new LinkedList<>();  // q0, "10010110"
-        queue.add(List.of("q0", input));
+        queue.add(List.of(startState, input));
 
         while (!queue.isEmpty()) {
             List<String> state = queue.remove();
