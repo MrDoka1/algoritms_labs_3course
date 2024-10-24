@@ -29,7 +29,7 @@ public class NKA {
 
             if (string.isEmpty()) {
                 if (!possibleStates.containsKey("E")) {
-                    return trueStates.contains(currentState);
+                    if (queue.isEmpty()) return trueStates.contains(currentState);
                 }
             }
 
