@@ -9,12 +9,13 @@ public class ThompsonAlgorithm {
     public static DKA start(NKA nka) {
         final Map<String, Map<String, List<String>>> transitions = nka.getTransitions();
         final List<String> trueStates = nka.getTrueStates();
+        final String startStateNKA = nka.getStartState();
 
         final Map<String, Map<String, String>> dkaTransitions = new HashMap<>();
         final List<String> dkaTrueStates = new ArrayList<>();
 
         Queue<Set<String>> queue = new LinkedList<>();
-        Set<String> startState = getNextState("q0", "E", transitions);
+        Set<String> startState = getNextState(startStateNKA, "E", transitions);
         queue.add(startState);
         Set<Set<String>> passedStates = new HashSet<>();
 
