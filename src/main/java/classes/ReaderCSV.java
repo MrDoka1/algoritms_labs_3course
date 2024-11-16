@@ -133,4 +133,19 @@ public class ReaderCSV {
         }
     }
 
+    public static HashMap<String, List<String>> readGrammar(String fileName) {
+        HashMap<String, List<String>> hashMap = new HashMap<>();
+        try (Scanner scanner = new Scanner(new File(PATH + fileName + ".csv"))) {
+            scanner.useDelimiter("\n");
+                while (scanner.hasNext()) {
+                    String[] strings = scanner.nextLine().split(",");
+                    hashMap.put(strings[0], List.of(strings[1].split("\\|")));
+                }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return hashMap;
+    }
+
 }
