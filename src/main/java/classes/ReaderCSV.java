@@ -2,6 +2,8 @@ package classes;
 
 import Laba1.DKA;
 import Laba2.NKA;
+import Laba6.DataTransaction;
+import Laba6.PushDownAutomaton;
 import Laba9.TuringMachine;
 
 import java.io.File;
@@ -146,6 +148,50 @@ public class ReaderCSV {
             throw new RuntimeException(e);
         }
         return hashMap;
+    }
+
+    public static PushDownAutomaton readPushDownAutomaton(String fileName) {
+        Map<String, Map<String, Map<String, List<DataTransaction>>>> transactions = new HashMap<>();
+        String startState = "";
+        String currentString;
+
+        try (Scanner scanner = new Scanner(new File(PATH + fileName + ".csv"))) {
+            scanner.useDelimiter("\n");
+            if (scanner.hasNext()) {
+                currentString = scanner.nextLine();
+                startState = currentString.split(",")[0];
+                scanner.nextLine();
+            }
+
+            String state = "";
+            while (scanner.hasNext()) {
+                currentString = scanner.nextLine();
+                String[] strings = currentString.split(",");
+
+                if (strings.length == 1) {
+                    state = strings[0];
+                    transactions.put(state, new HashMap<>());
+                } else {
+                    List<String> backStack;
+                    if (strings[3].replaceAll("\\[", "").replaceAll("]", "").isEmpty()) {
+                        backStack = new ArrayList<>();
+                    } else {
+                        backStack = new ArrayList<>(List.of(strings[3].replaceAll("\\[", "")
+                                .replaceAll("]", "").split(" ")));
+                    }
+                    DataTransaction dataTransaction = new DataTransaction(backStack, processingString(strings[0]));
+
+                    String inputSymbol = strings[1];
+                    String stackSymbol  = strings[2];
+
+                    transactions.get(state).computeIfAbsent(inputSymbol, k -> new HashMap<>())
+                            .computeIfAbsent(stackSymbol, k -> new ArrayList<>()).add(dataTransaction);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return new PushDownAutomaton(transactions, startState);
     }
 
 }
