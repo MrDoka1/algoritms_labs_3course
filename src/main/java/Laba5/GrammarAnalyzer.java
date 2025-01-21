@@ -30,7 +30,7 @@ public class GrammarAnalyzer {
                     grammarHashMap.get(elements.get(0)).forEach(construction -> {
                         List<String> newElements = new ArrayList<>(List.of(construction.split(" ")));
                         newElements.addAll(removeElements);
-                        queueElement.elements = newElements;
+                        //queueElement.elements = newElements;
                         queue.add(new QueueElement(new ArrayList<>(strings), newElements));
                     });
                 } else {

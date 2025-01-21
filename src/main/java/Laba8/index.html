@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            fill: #999;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+        .node text {
+            font: 12px sans-serif;
+        }
+        .link {
+            fill: none;
+            stroke: #555;
+            stroke-opacity: 0.4;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Tree Visualization</h1>
+<svg id="tree-svg" width="1200" height="800"></svg>
+
+<script>
+    // Размеры SVG
+    const width = 1200, height = 800;
+    const svg = d3.select("#tree-svg");
+    const g = svg.append("g").attr("transform", "translate(40,0)");
+
+    const tree = d3.tree().size([height, width - 160]);
+    const stratify = d => {
+        const recurse = (node) => ({
+            name: node.data,
+            children: node.nodes ? node.nodes.map(recurse) : null
+        });
+        return d3.hierarchy(recurse(d));
+    };
+
+    // Загружаем JSON
+    d3.json("tree.json").then(data => {
+        const root = stratify(data);
+        tree(root);
+
+        // Рисуем связи (links)
+        const link = g.selectAll(".link")
+            .data(root.links())
+            .join("path")
+            .attr("class", "link")
+            .attr("d", d3.linkHorizontal()
+                .x(d => d.y)
+                .y(d => d.x)
+            );
+
+        // Рисуем узлы (nodes)
+        const node = g.selectAll(".node")
+            .data(root.descendants())
+            .join("g")
+            .attr("class", "node")
+            .attr("transform", d => `translate(${d.y},${d.x})`);
+
+        node.append("circle")
+            .attr("r", 5);
+
+        node.append("text")
+            .attr("dy", 3)
+            .attr("x", d => d.children ? -10 : 10)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name);
+    }).catch(error => console.error("Error loading JSON:", error));
+</script>
+</body>
+</html>

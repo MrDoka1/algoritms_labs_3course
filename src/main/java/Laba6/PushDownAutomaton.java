@@ -27,7 +27,9 @@ public class PushDownAutomaton {
             //if (currentInput.isEmpty() && currentStack.size() == 1 && currentStack.pop().equals("Z0")) return true;
             if (currentInput.isEmpty() && currentStack.isEmpty()) return true;
             if (currentStack.isEmpty()) continue;
-            if (currentInput.isEmpty() && currentStack.size() > 1) continue;
+            if (currentInput.isEmpty() && currentStack.size() > 1) {
+                if (!transactions.get(currentState).containsKey("E")) continue;
+            };
 
             Map<String, Map<String, List<DataTransaction>>> currentTransactions = transactions.get(currentState);
             String currentStackSymbol = currentStack.pop();
